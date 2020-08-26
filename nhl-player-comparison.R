@@ -377,7 +377,7 @@ career_stats <- merge(
 
   
   
-###-- CALCULATED WITH TOP GOAL SCORERS BY SEASON REMOVED FROM ADJUSTMENT --###  
+###-- CALCULATED WITH TOP GOAL/ASSIST/POINT SCORERS (POSITIVE OUTLIERS) BY SEASON REMOVED FROM ADJUSTMENT --###  
 
 # next we will try to remove only the goals each season from the top scorers
 
@@ -394,7 +394,7 @@ career_stats <- merge(
     # Goals
     g_outlier_tbl <- skater_stats %>%
       select(SEASON, G) %>%
-      dplyr::group_by(SEASON) %>%
+      group_by(SEASON) %>%
       summarise(
         MEAN = mean(G),
         SD = sd(G)
@@ -405,13 +405,13 @@ career_stats <- merge(
         '4SD_OVER_MEAN' = MEAN+(SD*4)
       )
     
-    skater_stats_outliers_removed <- merge(skater_stats, g_outlier_tbl, by='SEASON', all=TRUE)
-    skater_stats_outliers_removed <- skater_stats_outliers_removed %>%
+    skater_stats_goal_outliers_removed <- merge(skater_stats, g_outlier_tbl, by='SEASON', all=TRUE)
+    skater_stats_goal_outliers_removed <- skater_stats_goal_outliers_removed %>%
       subset(
         G < `3SD_OVER_MEAN`
       )
     
-    ggplot(skater_stats_outliers_removed, aes(x=SEASON, y=G)) + geom_point()
+    ggplot(skater_stats_goal_outliers_removed, aes(x=SEASON, y=G)) + geom_point()
     
     # Assists
     a_outlier_tbl <- skater_stats %>%
@@ -470,11 +470,11 @@ career_stats <- merge(
     )
   
     # Goals
-    players_per_season_outliers_removed <- skater_stats_outliers_removed %>%
+    players_per_season_goal_outliers_removed <- skater_stats_goal_outliers_removed %>%
       count(SEASON)
-    colnames(players_per_season_outliers_removed) <- c('SEASON', 'PLAYER_COUNT')
+    colnames(players_per_season_goal_outliers_removed) <- c('SEASON', 'PLAYER_COUNT')
     
-    season_stats_outliers_removed <- skater_stats_outliers_removed %>%
+    season_stats_goal_outliers_removed <- skater_stats_goal_outliers_removed %>%
       group_by(SEASON) %>%
       summarise(
         GP_TOT = sum(GP),
@@ -488,14 +488,14 @@ career_stats <- merge(
         PTSPG_TOT = round(PTS_TOT/GP_TOT, digits=4)
       )  
     
-    season_dat_outliers_removed <- cbind(teams_per_season, games_played_by_season, players_per_season_outliers_removed, season_stats_outliers_removed) %>%
+    season_dat_goal_outliers_removed <- cbind(teams_per_season, games_played_by_season, players_per_season_goal_outliers_removed, season_stats_goal_outliers_removed) %>%
       select(-c(3,5,7))
     
-    season_dat_outliers_removed <- add_column(season_dat_outliers_removed,
-                             LEAG_GP = season_dat_outliers_removed$TM_GP_TOT/2, .after = 3 # calculate number of games played league wide per season (each team plays one another)
+    season_dat_goal_outliers_removed <- add_column(season_dat_goal_outliers_removed,
+                             LEAG_GP = season_dat_goal_outliers_removed$TM_GP_TOT/2, .after = 3 # calculate number of games played league wide per season (each team plays one another)
     )
     
-    season_dat_outliers_removed <- season_dat_outliers_removed %>%
+    season_dat_goal_outliers_removed <- season_dat_goal_outliers_removed %>%
       mutate(
         LEAG_GPG = G_TOT/LEAG_GP,
         LEAG_APG = A_TOT/LEAG_GP,
@@ -571,13 +571,13 @@ career_stats <- merge(
   # Calculate Adjustment Factors
     
     # Goals
-    adj_baseline_outliers_removed <- season_dat_outliers_removed %>%
+    adj_baseline_goal_outliers_removed <- season_dat_goal_outliers_removed %>%
       filter(SEASON == 2020) %>%
       select(LEAG_GPG, LEAG_APG, LEAG_PTSPG)
     
-    season_dat_outliers_removed <- season_dat_outliers_removed %>%
+    season_dat_goal_outliers_removed <- season_dat_goal_outliers_removed %>%
       mutate(
-        ADJFAC_GPG = as.numeric(adj_baseline_outliers_removed[1])/LEAG_GPG,
+        ADJFAC_GPG = as.numeric(adj_baseline_goal_outliers_removed[1])/LEAG_GPG,
       )
     
     # Assists
@@ -603,30 +603,30 @@ career_stats <- merge(
   # Add Adjustment Factors to skater_stats and Calculate Adj Stats
     
     # Goals
-    skater_stats_outliers_removed <- merge(
-      skater_stats, season_dat_outliers_removed[ , c('SEASON', 'ADJFAC_GPG')], by='SEASON', all.x = TRUE
+    skater_stats_goal_outliers_removed <- merge(
+      skater_stats, season_dat_goal_outliers_removed[ , c('SEASON', 'ADJFAC_GPG')], by='SEASON', all.x = TRUE
     )
     
-    skater_stats_outliers_removed <- skater_stats_outliers_removed %>%
+    skater_stats_goal_outliers_removed <- skater_stats_goal_outliers_removed %>%
       mutate(
         ADJ_GPG = GPG*ADJFAC_GPG
       )
     
-    career_adj_stats_outliers_removed <- skater_stats_outliers_removed %>%
+    career_adj_stats_goal_outliers_removed <- skater_stats_goal_outliers_removed %>%
       group_by(PLAYER_NAME) %>%
       summarise(
         AVG_ADJ_GPG = mean(ADJ_GPG)
       )
     
-    career_stats_outliers_removed <- merge(
-      career_stats, career_adj_stats_outliers_removed, by='PLAYER_NAME', all = TRUE
+    career_stats_goal_outliers_removed <- merge(
+      career_stats, career_adj_stats_goal_outliers_removed, by='PLAYER_NAME', all = TRUE
     )
     
     # Sort by Leaders
     #GPG
-    career_stats_outliers_removed <- subset(career_stats_outliers_removed, G_TOT >= 100)
-    career_stats_outliers_removed <- career_stats_outliers_removed[order(-career_stats_outliers_removed$AVG_ADJ_GPG),]
-    rownames(career_stats_outliers_removed) <- 1:nrow(career_stats_outliers_removed)
+    career_stats_goal_outliers_removed <- subset(career_stats_goal_outliers_removed, G_TOT >= 100)
+    career_stats_goal_outliers_removed <- career_stats_goal_outliers_removed[order(-career_stats_goal_outliers_removed$AVG_ADJ_GPG),]
+    rownames(career_stats_goal_outliers_removed) <- 1:nrow(career_stats_goal_outliers_removed)
   
     # Assists
     skater_stats_assist_outliers_removed <- merge(
@@ -679,6 +679,7 @@ career_stats <- merge(
     career_stats_point_outliers_removed <- subset(career_stats_point_outliers_removed, G_TOT >= 100)
     career_stats_point_outliers_removed <- career_stats_point_outliers_removed[order(-career_stats_point_outliers_removed$AVG_ADJ_PTSPG),]
     rownames(career_stats_point_outliers_removed) <- 1:nrow(career_stats_point_outliers_removed)
-
     
-
+    
+    
+    
