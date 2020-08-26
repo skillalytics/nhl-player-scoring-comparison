@@ -110,7 +110,7 @@ href_stnd <- read.csv('./league_standings.csv')
 # Skater Stats
 skater_stats <- href_sbs %>%
   filter(
-    SEASON >= 1940
+    SEASON >= 1922
   ) %>%
   select(
     SEASON, PLAYER_NAME, AGE, TM, POS, GP, G, A, PTS
@@ -394,7 +394,7 @@ career_stats <- merge(
     # Goals
     g_outlier_tbl <- skater_stats %>%
       select(SEASON, G) %>%
-      group_by(SEASON) %>%
+      dplyr::group_by(SEASON) %>%
       summarise(
         MEAN = mean(G),
         SD = sd(G)
@@ -459,15 +459,15 @@ career_stats <- merge(
 
   # Calculate Season Data
   
-  # teams_per_season <- leag_stand %>%
-  #   count(SEASON)
-  # colnames(teams_per_season) <- c('SEASON', 'TEAM_COUNT')
-  # 
-  # games_played_by_season <- leag_stand %>%
-  #   group_by(SEASON) %>%
-  #   summarise(
-  #     TM_GP_TOT = sum(GP)
-  #   )
+  teams_per_season <- leag_stand %>%
+    count(SEASON)
+  colnames(teams_per_season) <- c('SEASON', 'TEAM_COUNT')
+
+  games_played_by_season <- leag_stand %>%
+    group_by(SEASON) %>%
+    summarise(
+      TM_GP_TOT = sum(GP)
+    )
   
     # Goals
     players_per_season_outliers_removed <- skater_stats_outliers_removed %>%
@@ -609,7 +609,7 @@ career_stats <- merge(
     
     skater_stats_outliers_removed <- skater_stats_outliers_removed %>%
       mutate(
-        ADJ_GPG = GPG*ADJFAC_GPG.y
+        ADJ_GPG = GPG*ADJFAC_GPG
       )
     
     career_adj_stats_outliers_removed <- skater_stats_outliers_removed %>%
@@ -625,7 +625,7 @@ career_stats <- merge(
     # Sort by Leaders
     #GPG
     career_stats_outliers_removed <- subset(career_stats_outliers_removed, G_TOT >= 100)
-    career_stats_outliers_removed <- career_stats_outliers_removed[order(-career_stats_outliers_removed$AVG_ADJ_GPG.y),]
+    career_stats_outliers_removed <- career_stats_outliers_removed[order(-career_stats_outliers_removed$AVG_ADJ_GPG),]
     rownames(career_stats_outliers_removed) <- 1:nrow(career_stats_outliers_removed)
   
     # Assists
@@ -635,7 +635,7 @@ career_stats <- merge(
     
     skater_stats_assist_outliers_removed <- skater_stats_assist_outliers_removed %>%
       mutate(
-        ADJ_APG = APG*ADJFAC_APG.y
+        ADJ_APG = APG*ADJFAC_APG
       )
     
     career_adj_stats_assist_outliers_removed <- skater_stats_assist_outliers_removed %>%
@@ -651,7 +651,7 @@ career_stats <- merge(
     # Sort by Leaders
     #APG
     career_stats_assist_outliers_removed <- subset(career_stats_assist_outliers_removed, A_TOT >= 150)
-    career_stats_assist_outliers_removed <- career_stats_assist_outliers_removed[order(-career_stats_assist_outliers_removed$AVG_ADJ_APG.y),]
+    career_stats_assist_outliers_removed <- career_stats_assist_outliers_removed[order(-career_stats_assist_outliers_removed$AVG_ADJ_APG),]
     rownames(career_stats_assist_outliers_removed) <- 1:nrow(career_stats_assist_outliers_removed)
     
     # Points
@@ -661,7 +661,7 @@ career_stats <- merge(
     
     skater_stats_point_outliers_removed <- skater_stats_point_outliers_removed %>%
       mutate(
-        ADJ_PTSPG = PTSPG*ADJFAC_PTSPG.y
+        ADJ_PTSPG = PTSPG*ADJFAC_PTSPG
       )
     
     career_adj_stats_point_outliers_removed <- skater_stats_point_outliers_removed %>%
@@ -677,10 +677,8 @@ career_stats <- merge(
     # Sort by Leaders
     #PTSPG
     career_stats_point_outliers_removed <- subset(career_stats_point_outliers_removed, G_TOT >= 100)
-    career_stats_point_outliers_removed <- career_stats_point_outliers_removed[order(-career_stats_point_outliers_removed$AVG_ADJ_PTSPG.y),]
+    career_stats_point_outliers_removed <- career_stats_point_outliers_removed[order(-career_stats_point_outliers_removed$AVG_ADJ_PTSPG),]
     rownames(career_stats_point_outliers_removed) <- 1:nrow(career_stats_point_outliers_removed)
+
     
-    
-    
-    
-  
+
