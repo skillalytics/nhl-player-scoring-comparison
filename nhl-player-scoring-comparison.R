@@ -7,11 +7,9 @@ library(plyr)
 
 #---  DATA PREP ---#
 
-# load dataset if already scraped and saved in project folder
+# Load Datasets
 href_sbs <- read.csv('./skater_basic_stats.csv')
 href_stnd <- read.csv('./league_standings.csv')
-
-# !as mentioned under the acquistion section, some data cleansing activities were performed in excel on the scraped .csv files prior to running the below code
 
 # Skater Stats
 skater_stats <- href_sbs %>%
