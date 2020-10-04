@@ -134,7 +134,7 @@ skater_stats_leagtots <- merge(
     summarise(
       GP = sum(GP),
       G = sum(G),
-      AVG_ADJ_GPG = mean(ADJ_GPG),
+      AVG_SEAS_ADJ_GPG = mean(ADJ_GPG),
       ADJ_G = sum(ADJ_G)
     ) %>%
     mutate(
@@ -165,7 +165,7 @@ skater_stats_leagtots <- merge(
     summarise(
       GP = sum(GP),
       A = sum(A),
-      AVG_ADJ_APG = mean(ADJ_APG),
+      AVG_SEAS_ADJ_APG = mean(ADJ_APG),
       ADJ_A = sum(ADJ_A)
     ) %>%
     mutate(
@@ -196,7 +196,7 @@ skater_stats_leagtots <- merge(
     summarise(
       GP = sum(GP),
       PTS = sum(PTS),
-      AVG_ADJ_PTSPG = mean(ADJ_PTSPG),
+      AVG_SEAS_ADJ_PTSPG = mean(ADJ_PTSPG),
       ADJ_PTS = sum(ADJ_PTS)
     ) %>%
     mutate(
@@ -216,11 +216,11 @@ skater_stats_leagtots <- merge(
 
   # Career Totals
   career_tot_output_tbl <- merge(
-    career_adj_goal_stats, career_adj_assist_stats[ , c('PLAYER_NAME', 'A', 'AVG_ADJ_APG', 'ADJ_A', 'ADJ_APG')],
+    career_adj_goal_stats, career_adj_assist_stats[ , c('PLAYER_NAME', 'A', 'AVG_SEAS_ADJ_APG', 'ADJ_A', 'ADJ_APG')],
     by='PLAYER_NAME'
   )
   career_tot_output_tbl <- merge(
-    career_tot_output_tbl, career_adj_point_stats[ , c('PLAYER_NAME', 'PTS', 'AVG_ADJ_PTSPG', 'ADJ_PTS', 'ADJ_PTSPG')],
+    career_tot_output_tbl, career_adj_point_stats[ , c('PLAYER_NAME', 'PTS', 'AVG_SEAS_ADJ_PTSPG', 'ADJ_PTS', 'ADJ_PTSPG')],
     by='PLAYER_NAME'
   )
   
