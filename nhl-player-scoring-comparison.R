@@ -138,7 +138,7 @@ skater_stats_leagtots <- merge(
       ADJ_G = sum(ADJ_G)
     ) %>%
     mutate(
-      ADJ_AVG_GPG = ADJ_G/GP
+      ADJ_GPG = ADJ_G/GP
     )
   
   skater_adj_goal_stats <- skater_stats_leagtots %>%
@@ -169,7 +169,7 @@ skater_stats_leagtots <- merge(
       ADJ_A = sum(ADJ_A)
     ) %>%
     mutate(
-      ADJ_AVG_APG = ADJ_A/GP
+      ADJ_APG = ADJ_A/GP
     )
   
   skater_adj_assist_stats <- skater_stats_leagtots %>%
@@ -200,7 +200,7 @@ skater_stats_leagtots <- merge(
       ADJ_PTS = sum(ADJ_PTS)
     ) %>%
     mutate(
-      ADJ_AVG_PTSPG = ADJ_PTS/GP
+      ADJ_PTSPG = ADJ_PTS/GP
     )
   
   skater_adj_point_stats <- skater_stats_leagtots %>%
@@ -216,11 +216,11 @@ skater_stats_leagtots <- merge(
 
   # Career Totals
   career_tot_output_tbl <- merge(
-    career_adj_goal_stats, career_adj_assist_stats[ , c('PLAYER_NAME', 'A', 'AVG_ADJ_APG', 'ADJ_A', 'ADJ_AVG_APG')],
+    career_adj_goal_stats, career_adj_assist_stats[ , c('PLAYER_NAME', 'A', 'AVG_ADJ_APG', 'ADJ_A', 'ADJ_APG')],
     by='PLAYER_NAME'
   )
   career_tot_output_tbl <- merge(
-    career_tot_output_tbl, career_adj_point_stats[ , c('PLAYER_NAME', 'PTS', 'AVG_ADJ_PTSPG', 'ADJ_PTS', 'ADJ_AVG_PTSPG')],
+    career_tot_output_tbl, career_adj_point_stats[ , c('PLAYER_NAME', 'PTS', 'AVG_ADJ_PTSPG', 'ADJ_PTS', 'ADJ_PTSPG')],
     by='PLAYER_NAME'
   )
   
