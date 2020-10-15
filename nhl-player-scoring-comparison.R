@@ -213,6 +213,20 @@ skater_stats_leagtots <- merge(
 
 
 #---  FINAL OUTPUT ---#
+  
+  # Season Data
+  season_dat_output_tbl <- season_dat %>%
+    mutate(
+      LEAG_GPG_ADJFAC = BASELINE_GPG/LEAG_GPG,
+      LEAG_APG_ADJFAC = BASELINE_APG/LEAG_APG,
+      LEAG_PTSPG_ADJFAC = BASELINE_PTSPG/LEAG_PTSPG,
+      LEAG_ADJ_GPG = LEAG_GPG*LEAG_GPG_ADJFAC,
+      LEAG_ADJ_APG = LEAG_APG*LEAG_APG_ADJFAC,
+      LEAG_ADJ_PTSPG = LEAG_PTSPG*LEAG_PTSPG_ADJFAC,
+      GPG_ADJ_CHG = (LEAG_GPG - LEAG_ADJ_GPG)/LEAG_GPG,
+      APG_ADJ_CHG = (LEAG_APG - LEAG_ADJ_APG)/LEAG_APG,
+      PTSPG_ADJ_CHG = (LEAG_PTSPG - LEAG_ADJ_PTSPG)/LEAG_PTSPG,
+    )
 
   # Career Totals
   career_tot_output_tbl <- merge(
@@ -236,6 +250,7 @@ skater_stats_leagtots <- merge(
     by=c('SEASON', 'PLAYER_NAME', 'AGE', 'TM', 'POS')
   )
 
+write.csv(season_dat_output_tbl, './season_dat.csv', row.names = FALSE)  
 write.csv(career_tot_output_tbl, './career_adjusted_stats.csv', row.names = FALSE)  
 write.csv(skater_stats_output_tbl, './season_adjusted_skater_stats.csv', row.names = FALSE)  
   
