@@ -1,8 +1,7 @@
 
 #---  SETUP ---#
+
 library(tidyverse)
-library(rvest)
-library(plyr)
 
 
 #---  DATA PREP ---#
